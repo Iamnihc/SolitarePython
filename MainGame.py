@@ -61,7 +61,7 @@ def checkres():
 
 
 def findsuite(card):
-    return card[1]
+    return card[-1]
 
 
 def color(card):
@@ -93,10 +93,12 @@ def checkplace(topcard, newtop):
     newval=(int(newtop[:-1]))
     print(topval)
     print(newval)
+    print(topcard[1])
     print(color(topcard))
     print(color(newtop))
     if not topcard is int:
         if topval==newval and color(topcard) != color(newtop):
+            print("works")
             return True
         else:
             return False
