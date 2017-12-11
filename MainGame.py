@@ -90,7 +90,7 @@ def checkplace(topcard, newtop):
     if newtop[0] =="T":
         newtop="10"+newtop[1]
     topval=(int(topcard[:-1])-1)
-    newval=(int(newtop[:-1])-1)
+    newval=(int(newtop[:-1]))
     print(topval)
     print(newval)
     if not topcard is int:
