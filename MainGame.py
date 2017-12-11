@@ -123,7 +123,7 @@ def checkfinal(array, newtop):
     if newtop[0] =="T":
         newtop="10"+newtop[1]
     if len(array)>1:
-        print(topcard[0,len(topcard)-1])
+        print(topcard[:-1])
         if not topcard == "":
             if (int(topcard[:-1]))-1==int(newtop[:-1]) and suite(topcard) == suite(newtop):
                 return True
