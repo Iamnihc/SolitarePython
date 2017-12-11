@@ -34,13 +34,14 @@ def pickcard():
         if fromstack>0  and fromstack<10 and len(movetostacks[fromstack-1])>1:
             fcard = ((movetostacks[fromstack-1])[-1])
             fromstack=movetostacks[int(fromstack)-1]
-
+        elif fromstack>0  and fromstack<10 and len(movetostacks[fromstack-1])==1:
+            fcard = "EMPTY"
+            fromstack=movetostacks[int(fromstack)-1]
         elif fromstack == 0 and len(deck) > 1:
             fcard = deck[-1]
             fromstack = deck
         else :
             print("invalid Choice")
-            pickcard()
     # Is it 0 (The deck) ?
 
     # is the stack one of the final?
@@ -82,6 +83,9 @@ nums.append("T")
 for suite in suites:
     for type in nums:
         cards.append(type+suite)
+
+
+#start of the game
 
 # create the piles
 deck=[0]
@@ -156,8 +160,10 @@ while not haswon(finalstacks):
                 isn=True
             if len(fromstack)<2:
                 fromstack=False
+            if fromstack == "EMPTY":
+                fromstack=False
 
-        while tostack == 0 and tostack == False:
+        while tocard == 0 and tostack == False:
             print("Where should the card go?")
             toarr=pickcard()
             tocard=toarr[0]
@@ -165,6 +171,7 @@ while not haswon(finalstacks):
             print("You chose: "+ str(tocard))
             if tostack==0:
                 print("invalid Choice")
+
         # Are you trying to move to the same stack?
         if tostack != fromstack and not isn:
             # Are you trying to move to one of the mid stacks?

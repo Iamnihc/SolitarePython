@@ -31,38 +31,42 @@ def color(card):
 
 # Finds the rules
 def checkplace(topcard, newtop):
-    if topcard[0] =="K":
-        topcard="13"+topcard[1]
-    if topcard[0] =="Q":
-        topcard="12"+topcard[1]
-    if topcard[0] =="J":
-        topcard="11"+topcard[1]
-    if topcard[0] =="T":
-        topcard="10"+topcard[1]
-    if newtop[0] =="K":
-        newtop="13"+newtop[1]
-    if newtop[0] =="Q":
-        newtop="12"+newtop[1]
-    if newtop[0] =="J":
-        newtop="11"+newtop[1]
-    if newtop[0] =="T":
-        newtop="10"+newtop[1]
-    topval=(int(topcard[:-1])-1)
-    newval=(int(newtop[:-1]))
-    print(topval)
-    print(newval)
-    print(topcard[1])
-    print(color(topcard))
-    print(color(newtop))
-    if not topcard is int:
-        if topval==newval and color(topcard) != color(newtop):
-            print("works")
+    print(topcard)
+    print(newtop)
+    if topcard=="EMPTY":
+        if newtop[0]=="K":
             return True
-        else:
-            return False
     else:
-        print("this doesnt work yet")
-        return False
+        print(topcard)
+        if topcard[0] =="K":
+            topcard="13"+topcard[1]
+        if topcard[0] =="Q":
+            topcard="12"+topcard[1]
+        if topcard[0] =="J":
+            topcard="11"+topcard[1]
+        if topcard[0] =="T":
+            topcard="10"+topcard[1]
+        if newtop[0] =="K":
+            newtop="13"+newtop[1]
+        if newtop[0] =="Q":
+            newtop="12"+newtop[1]
+        if newtop[0] =="J":
+            newtop="11"+newtop[1]
+        if newtop[0] =="T":
+            newtop="10"+newtop[1]
+        topval=(int(topcard[:-1])-1)
+        newval=(int(newtop[:-1]))
+        print(topval)
+        print(newval)
+        print(topcard[1])
+        print(color(topcard))
+        print(color(newtop))
+        if not topcard is int:
+            if topval==newval and color(topcard) != color(newtop):
+                print("works")
+                return True
+            else:
+                return False
 
 
 
