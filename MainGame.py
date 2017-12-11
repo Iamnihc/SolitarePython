@@ -89,8 +89,10 @@ def checkplace(topcard, newtop):
         newtop="11"+newtop[1]
     if newtop[0] =="T":
         newtop="10"+newtop[1]
-    topval=(int(topcard[0,len(topcard-1)])-1)
-    newval=(int(newtop[0,len(topcard)-1]))
+    topval=(int(topcard[:-1])-1)
+    newval=(int(newtop[:-1])-1)
+    print(topval)
+    print(newval)
     if not topcard is int:
         if topval==newval and color(topcard) != color(newtop):
             return True
