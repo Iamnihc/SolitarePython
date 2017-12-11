@@ -93,6 +93,8 @@ def checkplace(topcard, newtop):
     newval=(int(newtop[:-1]))
     print(topval)
     print(newval)
+    print(color(topcard))
+    print(color(newtop))
     if not topcard is int:
         if topval==newval and color(topcard) != color(newtop):
             return True
@@ -125,9 +127,10 @@ def checkfinal(array, newtop):
     print(topcard)
     print(newtop)
     if len(array)>1:
-        print(topcard[:-1])
-        topval = (int(topcard[:-1]) - 1)
-        newval = (int(newtop[:-1]))
+        print(int(topcard)[:-1])
+        print(int(newtop[:-1])-1)
+        topval = (int(topcard[:-1]))
+        newval = (int(newtop[:-1])-1)
         if not topcard == "":
             if topval==newval and suite(topcard) == suite(newtop):
                 return True
