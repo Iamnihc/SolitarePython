@@ -66,7 +66,8 @@ def pickcard():
         print("Invalid Choice. Choose Again")
         pickcard()
     returnarr=[fcard, fromstack]
-    return returnarr.findsuite()
+    return returnarr
+
 # create the cards
 suites=["♠", "♡", "♢", "♣"]
 cards=[]
