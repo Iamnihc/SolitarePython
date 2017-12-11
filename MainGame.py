@@ -122,10 +122,12 @@ def checkfinal(array, newtop):
         newtop="11"+newtop[1]
     if newtop[0] =="T":
         newtop="10"+newtop[1]
-    topval = (int(topcard[:-1]) - 1)
-    newval = (int(newtop[:-1]))
+    print(topcard)
+    print(newtop)
     if len(array)>1:
         print(topcard[:-1])
+        topval = (int(topcard[:-1]) - 1)
+        newval = (int(newtop[:-1]))
         if not topcard == "":
             if topval==newval and suite(topcard) == suite(newtop):
                 return True
