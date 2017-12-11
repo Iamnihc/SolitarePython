@@ -127,12 +127,14 @@ def checkfinal(array, newtop):
     print(topcard)
     print(newtop)
     if len(array)>1:
-        print(int(topcard)[:-1])
-        print(int(newtop[:-1])-1)
-        topval = (int(topcard[:-1]))
-        newval = (int(newtop[:-1])-1)
+        if len(topcard)==2:
+            topval = (int(topcard[0]))
+            newval = (int(newtop[0]))
+        if len(topcard)==3:
+            topval = (int(topcard[0,2]))
+            newval = (int(newtop[0,2]))
         if not topcard == "":
-            if topval==newval and suite(topcard) == suite(newtop):
+            if topval==newval-1 and findsuite(topcard) == findsuite(newtop):
                 return True
             else:
                 return False
