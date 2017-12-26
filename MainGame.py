@@ -1,31 +1,72 @@
-from random import randint
 from solitairebasics import *
+from time import sleep
+from PyAi import aichoose
 def reveal():
+    print("\n\n\n\n\n\n\n")
+    print("Deck: ", end="[")
+    print(deck[-1], end="]\n\n")
     for i in range(0, 6):
         print("Stack " + str(i + 1)+": ", end="")
         # choose the current stack
         currentstack = movetostacks[i]
         currentcount = revealedstacks[i]
+        currentlen = len(currentstack)-1
         for i in range(0, (len(currentstack)-1) - currentcount):
-            print("\'X\'  ", end="")
+            print("[ ╳ ]", end=" ")
         # print the revealed cards
-        if len(currentstack)>1:
-            print(currentstack[-1 * currentcount:])
+        if currentlen>0:
+            for i in range(currentlen-currentcount,currentlen):
+                stylecard="["+str(currentstack[i+1])+"]"
+                print(stylecard,end=" ")
+            print("")
         # Print a new line if stack is empty
         else:
             print()
-    # show the top card of the deck
-    print("Deck: ", end="")
-    print(deck[-1])
+    print()
     # show the top cards of each final pile
     print("Clubs: "+str(club[-1]))
     print("Hearts: " + str(heart[-1]))
     print("Spades: " + str(spade[-1]))
     print("Diamonds: " + str(diamond[-1]))
+    print()
 
 
-def pickcard():
-    fromstack=checkres()
+def movemany(arraystart, nextarray,revealed,ai):
+    keepgoing=True
+    movevalid=False
+    while (not movevalid) and keepgoing:
+        movearray=[]
+        numcards=""
+        while numcards.__class__ is str and not numcards.isnumeric():
+            if ai:
+                numcards=aichoose(deck, finalstacks, movetostacks,"N")
+            else:
+                numcards=input("How many cards should be moved")
+            if numcards.isnumeric() and "." not in numcards:
+                if int(numcards)<=revealed:
+                    numcards=int(numcards)
+                else:
+                    keepgoing=tryagain()
+        if numcards.__class__ is int and keepgoing:
+            movearray.append(arraystart[-numcards:])
+        if checkplace(nextarray[-1],movearray[-1][0]):
+            movevalid=True
+        else:
+            movevalid=False
+            keepgoing=tryagain()
+    if not keepgoing:
+        return [False,0]
+    elif movevalid==True:
+        return [True, numcards]
+
+
+def pickcard(ai, fromto):
+    if ai==False:
+        fromstack = checkres(input("Pick a stack:"))
+    else:
+        fromstack=checkres(aichoose(deck, finalstacks, movetostacks,fromto))
+        sleep(.5)
+        print(fromstack)
     fcard=False
     # if the card exists, pick it
     # is the stack a number (Non 0)?
@@ -42,8 +83,6 @@ def pickcard():
             fromstack = deck
         else :
             print("invalid Choice")
-    # Is it 0 (The deck) ?
-
     # is the stack one of the final?
     elif fromstack == "C" :
         fcard = club[-1]
@@ -65,7 +104,6 @@ def pickcard():
         fromstack= deck
     else:
         print("Invalid Choice. Choose Again")
-        pickcard()
     returnarr=[fcard, fromstack]
     return returnarr
 
@@ -115,7 +153,7 @@ print("Intro To CS Final project")
 print("Made in Python 3.6")
 print("Started on 12/9/17")
 print("Projects Never end. Still a work in progress")
-print("Press enter to continue")
+print("Press enter to continue\n")
 input()
 print("\n\n\n\n\n\n\n")
 
@@ -132,8 +170,15 @@ print("D- Diamonds")
 print("N- Next card in Deck")
 input("Press enter to Continue")
 print("\n\n")
-# Game loop
+# reset score
+score = 0
+#Turn on or not turn on ai
+#aion=enable()
+aion = True
+
+#Game Loop
 while not haswon(finalstacks):
+    score+=1
     reveal()
     # reset the turn variables
     fromcard = 0
@@ -141,14 +186,20 @@ while not haswon(finalstacks):
     fromstack = False
     tostack = False
     movevalid=False
+    movedcards = []
     while not movevalid:
         fromcard = 0
         tocard = 0
         fromstack = False
         tostack = False
-        while fromstack == False and fromstack.__class__ is bool:
+        breakout=False
+        #Choose the stack to move from
+        while not fromstack and fromstack.__class__ is bool:
             print("Where should the card come from?")
-            fromarr = pickcard()
+            if aion:
+                fromarr = pickcard(True,"F")
+            else:
+                fromarr=pickcard(False, "F")
             fromcard = fromarr[0]
             fromstack = fromarr[1]
             print("You chose: "+ str(fromcard))
@@ -162,47 +213,81 @@ while not haswon(finalstacks):
                 fromstack=False
             if fromstack == "EMPTY":
                 fromstack=False
-
+        #choose the stack to move to
         while tocard == 0 and tostack == False:
             print("Where should the card go?")
-            toarr=pickcard()
+            if aion:
+                toarr = pickcard(True, "T")
+            else:
+                toarr=pickcard(False, "T")
             tocard=toarr[0]
             tostack=toarr[1]
             print("You chose: "+ str(tocard))
             if tostack==0:
                 print("invalid Choice")
 
-        # Are you trying to move to the same stack?
-        if tostack != fromstack and not isn:
+        #if you should move many...
+        if fromstack in movetostacks and tostack in movetostacks:
+            stacknum=movetostacks.index(fromstack)
+            many=movemany(fromstack,tostack, revealedstacks[stacknum],aion)
+            if many[0]==False:
+                many=False
+                breakout=True
+            else:
+                nummoved=many[1]
+                nummoved=int(nummoved)
+                movedcards.append(fromstack[-nummoved:])
+                fromstack.pop(nummoved)
+                for i in movedcards:
+                    tostack.append(i[0])
+                many=True
+                movevalid=True
+                breakout=False
+        else:
+            many=False
+        # Are you trying to move to the same stack?, not getting the next card in the deck, not moving multiple cards, and not trying agian...
+        if tostack != fromstack and not isn and not many and not breakout:
             # Are you trying to move to one of the mid stacks?
             if tostack[0].__class__ is int and tostack[0]>0:
+
                 # Is your move valid?
                 if checkplace(tocard, fromcard):
                     movevalid=True
-                    # convoluted way of adding 1 to the revealed for that stack
-                    #print(fromstack)
-                    # You cant see the cards. Whatevs
-                    # print(int(tostack[0]))
-                    addarray(revealedstacks,int(tostack[0])-1)
+                    movedcards.append(fromcard)
                 else:
                     # Make them move again
                     print("invalid Choice Cant Wrong color/number")
             if tostack[0].__class__ is str:
-                if (checkfinal(tostack,fromcard)):
+                if checkfinal(tostack,fromcard):
                     movevalid=True
             else:
-                print("Invalid Choice")
-        else:
-            print("Invalid Choice")
-        #movevalid=True
+                pass
+
+    numcards=len(movedcards)
+    if tostack in movetostacks:
+        # convoluted way of adding 1 to the revealed for that stack
+        replace(revealedstacks, int(tostack[0]) - 1, numcards)
+
+    if fromstack in movetostacks:
+        # convoluted way of subtracting 1 to the revealed for that stack
+        replace(revealedstacks, int(fromstack[0]) - 1, -1 * numcards)
+    # if the top card isnt shown, show it
+    for i in range(0, 6):
+        stack=revealedstacks[i]
+        if stack == 0:
+            replace(revealedstacks,i,1)
     print("Move validated")
     # Allow shuffiling through Deck:
     # So if the choice is an "N", Switch the deck and run agian
-    if fromcard==deck[1]:
+    if fromcard == deck[1]:
         deck.append(deck[1])
         deck.pop(1)
     # Otherwise, move the card to the correct spot
-    else:
+
+    elif many == False:
         fromstack.pop(-1)
         tostack.append(fromcard)
     print("Success!")
+
+print("You got a score of", score)
+quit()
