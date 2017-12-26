@@ -7,6 +7,7 @@ def assign(mfrom, mto, numb):
         mfrom.pop(move)
 
 def convertnum(convertin):
+    convertin=str(convertin)
     if convertin[0] == "K":
         convertin = "13"+convertin[1]
     if convertin[0] == "Q":
@@ -51,11 +52,11 @@ def color(card):
 
 # Finds the rules
 def checkplace(topcard, newtop):
-
-    topcard=convertnum(topcard)
+    topcard=convertnum(str(topcard))
     newtop=convertnum(newtop)
     if topcard == "EMPTY":
-        if newtop[0] == "K":
+        print("top is",newtop[0:2])
+        if newtop[0:2] == "13":
             return True
     else:
         topval = (int(topcard[:-1])-1)

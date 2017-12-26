@@ -1,5 +1,7 @@
 from solitairebasics import *
 from time import sleep
+global delay
+delay=0
 def enable():
     aion=0
     while aion==0:
@@ -24,13 +26,16 @@ def aichoose(deck, finalarr, midarr,revarr, fromto,lastcard):
             suite=str(findsuite(i))
             nextcard=nextnum+suite
             nextfinal.append(nextcard)
+    print(nextfinal)
+    # move aces from the deck
     if str(findnum(deck[-1])) == "1":
         fromcard="0"
         tocard=str(lettersuit(deck[-1]))
+
     for stack in midarr:
         if len(stack)>1:
             print("checking card "+stack[-1])
-            sleep(.1)
+            sleep(delay)
             # What to do if you cant do something
             # Find any empty stacks
             if stack[-1].__class__ is int:
@@ -38,7 +43,7 @@ def aichoose(deck, finalarr, midarr,revarr, fromto,lastcard):
                 print("Empty Stack at "+ str(stack[-1]))
                 if deck[-1][0] == "K":
                     print("Found king to move")
-                    sleep(.5)
+                    sleep(delay)
                     fromcard == "0"
                     tocard=str(stack+1)
                 for couldbeking in midarr:
@@ -73,6 +78,24 @@ def aichoose(deck, finalarr, midarr,revarr, fromto,lastcard):
                         tocard = str(stack[0])
                         fromcard = str(i+1)
                         numcards=revarr[i]
+
+        #You have an empty stack- Place a king
+        else:
+            if deck[-1][0] == "K":
+                fromcard = "0"
+                tocard = str(stack[0])
+                print("Found king to move: Deck")
+            for i in midarr:
+                if i != stack and len(i) > 2:
+                    firstrevealed = midarr[i[0]-1][revarr[i[0]-1]]
+                    print("first",firstrevealed)
+                    if firstrevealed[0] == "K":
+                        print("Found a king in stack", i[0])
+                        fromcard = i[0]
+                        tocard = stack
+                        numcards = revarr[i[0]]
+
+
     if fromcard == "N":
         print("No moves found, Choosing Next card")
     if fromto=="F":

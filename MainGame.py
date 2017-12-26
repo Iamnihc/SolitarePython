@@ -1,6 +1,6 @@
 from solitairebasics import *
 from time import sleep
-from PyAi import aichoose,enable
+from PyAi import aichoose,enable,delay
 global ncounter
 ncounter = 0
 lastcard = 0
@@ -68,7 +68,7 @@ def pickcard(ai, fromto):
         fromstack = checkres(input("Pick a stack:"))
     else:
         fromstack=checkres(aichoose(deck, finalstacks, movetostacks,revealedstacks,fromto,lastcard))
-        sleep(.5)
+        sleep(delay)
         print(fromstack)
     fcard=False
     # if the card exists, pick it
@@ -292,6 +292,10 @@ while not haswon(finalstacks):
         stack=revealedstacks[i]
         if stack == 0:
             replace(revealedstacks,i,1)
+    #make sure nothing is revealed too far
+    for i in range(0,6):
+        if revealedstacks[i] > len(movetostacks[i]):
+            replace(revealedstacks,i,-1)
     print("Move validated")
     # Move throught the deck
     if fromcard == deck[1]:
@@ -309,4 +313,13 @@ while not haswon(finalstacks):
         print("OUT OF MOVES. YOU LOSE")
         print(deck)
         break
+# Make the score better, mostly arbitrary
+score = score*2
+score += len(deck)*2
+for i in range(0,6):
+    score += len(movetostacks[i])
+    score -= revealedstacks[i]/2
+score= 1/score
+score=score*100000
+score=round(score)
 print("You got a score of", score)
