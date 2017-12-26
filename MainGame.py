@@ -1,6 +1,6 @@
 from solitairebasics import *
 from time import sleep
-from PyAi import aichoose
+from PyAi import aichoose,enable
 global ncounter
 ncounter = 0
 lastcard = 0
@@ -175,9 +175,9 @@ input("Press enter to Continue")
 print("\n\n")
 # reset score
 score = 0
-#Turn on or not turn on ai
-#aion=enable()
-aion = True
+# Turn on or not turn on ai
+aion=enable()
+#aion = True
 
 #Game Loop
 while not haswon(finalstacks):
