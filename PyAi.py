@@ -30,7 +30,7 @@ def aichoose(deck, finalarr, midarr,revarr, fromto,lastcard):
     for stack in midarr:
         if len(stack)>1:
             print("checking card "+stack[-1])
-            sleep(.0001)
+            sleep(.1)
             # What to do if you cant do something
             # Find any empty stacks
             if stack[-1].__class__ is int:

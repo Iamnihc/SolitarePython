@@ -68,7 +68,7 @@ def pickcard(ai, fromto):
         fromstack = checkres(input("Pick a stack:"))
     else:
         fromstack=checkres(aichoose(deck, finalstacks, movetostacks,revealedstacks,fromto,lastcard))
-        sleep(0)
+        sleep(.5)
         print(fromstack)
     fcard=False
     # if the card exists, pick it
