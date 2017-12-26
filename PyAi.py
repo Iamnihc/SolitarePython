@@ -12,7 +12,7 @@ def enable():
             return False
 
 
-def aichoose(deck, finalarr, midarr, fromto):
+def aichoose(deck, finalarr, midarr,revarr, fromto,lastcard):
     fromcard="N"
     finalcards=[]
     for i in finalarr:
@@ -30,7 +30,7 @@ def aichoose(deck, finalarr, midarr, fromto):
     for stack in midarr:
         if len(stack)>1:
             print("checking card "+stack[-1])
-            sleep(.1)
+            sleep(.0001)
             # What to do if you cant do something
             # Find any empty stacks
             if stack[-1].__class__ is int:
@@ -66,13 +66,13 @@ def aichoose(deck, finalarr, midarr, fromto):
                 tocard=str(stack[0])
             #check if you can move a card from the midstacks
             else:
+                # Try to find a card stack to move
                 for i in range(1,6):
-                    if stack!=midarr[i] and checkplace(stack[-1],midarr[i][-1]):
-                        tocard=str(stack[0])
-                        fromcard=str(i+1)
-                        numcards=1
-                        fromto
-
+                    firstrevealed = midarr[i][-1*revarr[i]]
+                    if stack!=midarr[i] and (len(midarr[i])!= 1) and firstrevealed != lastcard and checkplace(stack[-1],firstrevealed):
+                        tocard = str(stack[0])
+                        fromcard = str(i+1)
+                        numcards=revarr[i]
     if fromcard == "N":
         print("No moves found, Choosing Next card")
     if fromto=="F":

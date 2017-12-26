@@ -1,6 +1,9 @@
 from solitairebasics import *
 from time import sleep
 from PyAi import aichoose
+global ncounter
+ncounter = 0
+lastcard = 0
 def reveal():
     print("\n\n\n\n\n\n\n")
     print("Deck: ", end="[")
@@ -39,7 +42,7 @@ def movemany(arraystart, nextarray,revealed,ai):
         numcards=""
         while numcards.__class__ is str and not numcards.isnumeric():
             if ai:
-                numcards=aichoose(deck, finalstacks, movetostacks,"N")
+                numcards=aichoose(deck, finalstacks, movetostacks,revealedstacks,"N",lastcard)
             else:
                 numcards=input("How many cards should be moved")
             if numcards.isnumeric() and "." not in numcards:
@@ -64,8 +67,8 @@ def pickcard(ai, fromto):
     if ai==False:
         fromstack = checkres(input("Pick a stack:"))
     else:
-        fromstack=checkres(aichoose(deck, finalstacks, movetostacks,fromto))
-        sleep(.5)
+        fromstack=checkres(aichoose(deck, finalstacks, movetostacks,revealedstacks,fromto,lastcard))
+        sleep(0)
         print(fromstack)
     fcard=False
     # if the card exists, pick it
@@ -209,6 +212,9 @@ while not haswon(finalstacks):
                 movevalid=True
                 tostack= deck[-1]
                 isn=True
+                ncounter += 1
+            else:
+                ncounter = 0
             if len(fromstack)<2:
                 fromstack=False
             if fromstack == "EMPTY":
@@ -230,16 +236,23 @@ while not haswon(finalstacks):
         if fromstack in movetostacks and tostack in movetostacks:
             stacknum=movetostacks.index(fromstack)
             many=movemany(fromstack,tostack, revealedstacks[stacknum],aion)
+            print("AI MOVED")
             if many[0]==False:
                 many=False
                 breakout=True
             else:
                 nummoved=many[1]
                 nummoved=int(nummoved)
-                movedcards.append(fromstack[-nummoved:])
-                fromstack.pop(nummoved)
+                print(nummoved)
+                movedcards=fromstack[-nummoved:]
+                print(movedcards)
+                print("moving",movedcards)
                 for i in movedcards:
-                    tostack.append(i[0])
+                    print(i)
+                    print(tostack)
+                    print(fromstack)
+                    tostack.append(i)
+                    fromstack.remove(i)
                 many=True
                 movevalid=True
                 breakout=False
@@ -260,10 +273,13 @@ while not haswon(finalstacks):
             if tostack[0].__class__ is str:
                 if checkfinal(tostack,fromcard):
                     movevalid=True
+                    movedcards.append(fromcard)
             else:
                 pass
-
+    lastcard = movedcards
     numcards=len(movedcards)
+    print(movedcards)
+    print(numcards)
     if tostack in movetostacks:
         # convoluted way of adding 1 to the revealed for that stack
         replace(revealedstacks, int(tostack[0]) - 1, numcards)
@@ -277,17 +293,20 @@ while not haswon(finalstacks):
         if stack == 0:
             replace(revealedstacks,i,1)
     print("Move validated")
-    # Allow shuffiling through Deck:
-    # So if the choice is an "N", Switch the deck and run agian
+    # Move throught the deck
     if fromcard == deck[1]:
         deck.append(deck[1])
         deck.pop(1)
     # Otherwise, move the card to the correct spot
-
     elif many == False:
         fromstack.pop(-1)
         tostack.append(fromcard)
     print("Success!")
-
+    print(ncounter)
+    for i in movetostacks:
+        print(i)
+    if ncounter >= 2*len(deck) and len(deck) > 1:
+        print("OUT OF MOVES. YOU LOSE")
+        print(deck)
+        break
 print("You got a score of", score)
-quit()
