@@ -18,25 +18,38 @@ def convertnum(convertin):
         convertin = "10"+convertin[1]
     return convertin
 
+def convertletter(convertin):
+    convertin = str(convertin)
+    if convertin == "13":
+        convertin = "K"
+    if convertin == "12":
+        convertin = "Q"
+    if convertin == "11":
+        convertin = "J"
+    if convertin == "10":
+        convertin = "T"
+    return convertin
 
 def checkres(responce):
     while True:
-        while responce.__class__ is not str:
-            responce=input("Try again")
-        else:
-            if len(responce) == 1:
-                # Filter the valid letter responces
-                if responce == "C" or responce == "H" or responce == "S" or responce == "D" or responce == "N":
-                    # return true, exit the loop
-                    return responce
-                # Rerun if the responces are not integers at this point
-                elif not responce.isdigit():
-                    # breaks out of the loop by using this positon
-                    responce = False
-                elif int(responce)<7:
-                    return int(responce)
+        if responce != "":
+            responce = responce.upper()
+            while responce.__class__ is not str:
+                responce=input("Try again")
             else:
-                responce = False
+                if len(responce) == 1:
+                    # Filter the valid letter responces
+                    if responce == "C" or responce == "H" or responce == "S" or responce == "D" or responce == "N" or responce == "A":
+                        # return true, exit the loop
+                        return responce
+                    # Rerun if the responces are not integers at this point
+                    elif not responce.isdigit():
+                        # breaks out of the loop by using this positon
+                        responce = False
+                    elif int(responce)<7:
+                        return int(responce)
+                else:
+                    responce = False
 
 
 def findsuite(card):
@@ -54,11 +67,10 @@ def color(card):
 def checkplace(topcard, newtop):
     topcard=convertnum(str(topcard))
     newtop=convertnum(newtop)
-    if topcard == "EMPTY":
-        print("top is",newtop[0:2])
+    if topcard == "EMPTY" or topcard.__class__ is int:
         if newtop[0:2] == "13":
             return True
-    else:
+    elif not topcard.isdigit():
         topval = (int(topcard[:-1])-1)
         newval = (int(newtop[:-1]))
         if topcard is not int:

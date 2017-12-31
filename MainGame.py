@@ -46,20 +46,24 @@ def movemany(arraystart, nextarray,revealed,ai):
             else:
                 numcards=input("How many cards should be moved")
             if numcards.isnumeric() and "." not in numcards:
+                pass
                 if int(numcards)<=revealed:
                     numcards=int(numcards)
                 else:
                     keepgoing=tryagain()
         if numcards.__class__ is int and keepgoing:
             movearray.append(arraystart[-numcards:])
+        if (movearray[-1][0]).isalpha():
+            pass
         if checkplace(nextarray[-1],movearray[-1][0]):
             movevalid=True
         else:
             movevalid=False
-            keepgoing=tryagain()
-    if not keepgoing:
+        movevalid = True
+
+    if not keepgoing or movevalid == False:
         return [False,0]
-    elif movevalid==True:
+    else:
         return [True, numcards]
 
 
@@ -69,7 +73,6 @@ def pickcard(ai, fromto):
     else:
         fromstack=checkres(aichoose(deck, finalstacks, movetostacks,revealedstacks,fromto,lastcard))
         sleep(delay)
-        print(fromstack)
     fcard=False
     # if the card exists, pick it
     # is the stack a number (Non 0)?
@@ -81,7 +84,7 @@ def pickcard(ai, fromto):
         elif fromstack>0  and fromstack<10 and len(movetostacks[fromstack-1])==1:
             fcard = "EMPTY"
             fromstack=movetostacks[int(fromstack)-1]
-        elif fromstack == 0 and len(deck) > 1:
+        elif fromstack == 0 and len(deck) >= 1:
             fcard = deck[-1]
             fromstack = deck
         else :
@@ -103,12 +106,43 @@ def pickcard(ai, fromto):
         fromstack = diamond
     # Do you want to pick the next card in the deck?
     elif fromstack == "N":
-        fcard=deck[1]
+        fcard=deck[0]
         fromstack= deck
+    elif fromstack == "A":
+        fcard = "AI ON"
+        fromstack = "AI ON"
     else:
         print("Invalid Choice. Choose Again")
     returnarr=[fcard, fromstack]
     return returnarr
+
+
+# Welcome "Screen"
+print("")
+print("")
+print("Welcome to Text-Solitare")
+print("Made by Chinmai Srinivas")
+print("Intro To CS Final project")
+print("Made in Python 3.6")
+print("Started on 12/9/17")
+print("Projects Never end. Still a work in progress")
+print("Press enter to continue\n")
+input()
+print("\n\n\n\n\n\n\n")
+
+
+# reveal instructions
+print("Instructions:")
+print("To move from a stack, choose 1-6")
+print("To move from deck, 0")
+print("To move to final stacks:")
+print("C- Clubs")
+print("H- Hearts")
+print("S- Spades")
+print("D- Diamonds")
+print("N- Next card in Deck")
+input("Press enter to Continue")
+print("\n\n")
 
 # create the cards
 suites=["♠", "♡", "♢", "♣"]
@@ -147,32 +181,8 @@ revealedstacks=[1,1,1,1,1,1]
 for i in range(0,6):
     assign(cards, movetostacks[i],i+1)
 assign(cards, deck, len(cards))
-# Welcome "Screen"
-print("")
-print("")
-print("Welcome to Text-Solitare")
-print("Made by Chinmai Srinivas")
-print("Intro To CS Final project")
-print("Made in Python 3.6")
-print("Started on 12/9/17")
-print("Projects Never end. Still a work in progress")
-print("Press enter to continue\n")
-input()
-print("\n\n\n\n\n\n\n")
 
 
-# reveal instructions
-print("Instructions:")
-print("To move from a stack, choose 1-6")
-print("To move from deck, 0")
-print("To move to final stacks:")
-print("C- Clubs")
-print("H- Hearts")
-print("S- Spades")
-print("D- Diamonds")
-print("N- Next card in Deck")
-input("Press enter to Continue")
-print("\n\n")
 # reset score
 score = 0
 # Turn on or not turn on ai
@@ -207,9 +217,11 @@ while not haswon(finalstacks):
             fromstack = fromarr[1]
             print("You chose: "+ str(fromcard))
             isn=False
-            if fromcard==deck[1] and len(deck)>1:
+            #account for the N
+            if fromcard==deck[0] and len(deck)>0:
                 #bypass the next stuff
                 movevalid=True
+                fromcard = deck[0]
                 tostack= deck[-1]
                 isn=True
                 ncounter += 1
@@ -219,6 +231,12 @@ while not haswon(finalstacks):
                 fromstack=False
             if fromstack == "EMPTY":
                 fromstack=False
+            if fromstack == "AI ON":
+                aion = True
+                tocard = "AI ON"
+                movevalid = True
+                breakout = True
+                break
         #choose the stack to move to
         while tocard == 0 and tostack == False:
             print("Where should the card go?")
@@ -236,21 +254,15 @@ while not haswon(finalstacks):
         if fromstack in movetostacks and tostack in movetostacks:
             stacknum=movetostacks.index(fromstack)
             many=movemany(fromstack,tostack, revealedstacks[stacknum],aion)
-            print("AI MOVED")
             if many[0]==False:
                 many=False
                 breakout=True
             else:
                 nummoved=many[1]
                 nummoved=int(nummoved)
-                print(nummoved)
                 movedcards=fromstack[-nummoved:]
-                print(movedcards)
                 print("moving",movedcards)
                 for i in movedcards:
-                    print(i)
-                    print(tostack)
-                    print(fromstack)
                     tostack.append(i)
                     fromstack.remove(i)
                 many=True
@@ -276,50 +288,98 @@ while not haswon(finalstacks):
                     movedcards.append(fromcard)
             else:
                 pass
-    lastcard = movedcards
-    numcards=len(movedcards)
-    print(movedcards)
-    print(numcards)
-    if tostack in movetostacks:
-        # convoluted way of adding 1 to the revealed for that stack
-        replace(revealedstacks, int(tostack[0]) - 1, numcards)
+    if not breakout:
+        lastcard = movedcards
+        numcards=len(movedcards)
 
-    if fromstack in movetostacks:
-        # convoluted way of subtracting 1 to the revealed for that stack
-        replace(revealedstacks, int(fromstack[0]) - 1, -1 * numcards)
-    # if the top card isnt shown, show it
-    for i in range(0, 6):
-        stack=revealedstacks[i]
-        if stack == 0:
-            replace(revealedstacks,i,1)
-    #make sure nothing is revealed too far
-    for i in range(0,6):
-        if revealedstacks[i] > len(movetostacks[i]):
-            replace(revealedstacks,i,-1)
-    print("Move validated")
-    # Move throught the deck
-    if fromcard == deck[1]:
-        deck.append(deck[1])
-        deck.pop(1)
-    # Otherwise, move the card to the correct spot
-    elif many == False:
-        fromstack.pop(-1)
-        tostack.append(fromcard)
-    print("Success!")
-    print(ncounter)
-    for i in movetostacks:
-        print(i)
-    if ncounter >= 2*len(deck) and len(deck) > 1:
-        print("OUT OF MOVES. YOU LOSE")
-        print(deck)
-        break
+
+        # Move throught the deck
+        if fromcard == deck[0]:
+            deck.append(deck[1])
+            deck.pop(1)
+        # Otherwise, move the card to the correct spot
+        elif many == False:
+            fromstack.pop(-1)
+            tostack.append(fromcard)
+
+        #check if you have lost
+        if ncounter >= 2*len(deck) and len(deck) > 1:
+
+            if aion:
+                print("OUT OF MOVES. THE AI HAS FAILED YOU. TRY YOURSELF.")
+                aion= False
+                ncounter = 0
+            else:
+                print("OUT OF MOVES. YOU LOOSE. BETTER LUCK NEXT TIME.")
+                break
+        if tostack in movetostacks:
+            # convoluted way of adding 1 to the revealed for that stack
+            replace(revealedstacks, int(tostack[0]) - 1, numcards)
+
+        if fromstack in movetostacks:
+            # convoluted way of subtracting 1 to the revealed for that stack
+            replace(revealedstacks, int(fromstack[0]) - 1, -1 * numcards)
+        # if the top card isnt shown, show it
+        for i in range(0, 6):
+            stack = movetostacks[i]
+            stackval=revealedstacks[i]
+            if stackval == 0 and len(stack)>1:
+                replace(revealedstacks,i,1)
+        #make sure nothing is revealed too far
+        for i in range(0,6):
+            if revealedstacks[i] >= (len(movetostacks[i])):
+                replace(revealedstacks,i,-1)
 # Make the score better, mostly arbitrary
-score = score*2
 score += len(deck)*2
 for i in range(0,6):
     score += len(movetostacks[i])
     score -= revealedstacks[i]/2
 score= 1/score
-score=score*100000
+#make the score not a decimal
+score=score*1000000
 score=round(score)
+#end message. Unimportant
+if haswon(finalstacks):
+    print("YOU WIN! YAY!")
+#Show all the cards
+print("Deck: ",end = "")
+for i in deck:
+    if i == 0:
+        pass
+    else:
+        print("["+i+"]")
+print()
+for i in range(0, 6):
+    print("Stack " + str(i + 1)+": ", end="")
+    # choose the current stack
+    currentstack = movetostacks[i]
+    if len(currentstack)>1:
+        for i in currentstack:
+            stylecard="["+str(i)+"]"
+            print(stylecard,end=" ")
+        print("")
+    # Print a new line if stack is empty
+    else:
+        print()
+# show the top cards of each final pile
+for stack in finalstacks:
+    print()
+    if stack[0] == "C":
+        print("Clubs:    ", end="")
+    if stack[0] == "H":
+        print("Hearts:   ", end="")
+    if stack[0] == "S":
+        print("Spades:   ", end="")
+    if stack[0] == "D":
+        print("Diamonds: ", end="")
+    for i in stack:
+        if len(i) != 1:
+            # Output the card and fix the spacing
+            stylecard = "[" + str(i) + "]"
+            # Fix an annoying spacing issue
+            if stack[0] == "C" or stack[0] == "S":
+                #there might not look to be a difference but 1/6 spaces add up
+                stylecard = "[" + str(i) + " ]"
+            print(stylecard, end=" ")
+print()
 print("You got a score of", score)
